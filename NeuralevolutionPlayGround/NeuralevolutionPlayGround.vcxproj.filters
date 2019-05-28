@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>SourceQt</Filter>
+    </ClCompile>
+    <ClCompile Include="AGK_QT.cpp">
+      <Filter>SourceQt</Filter>
+    </ClCompile>
+    <ClCompile Include="AgkCore.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
+    <ClCompile Include="AgkTemplate.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
+    <ClCompile Include="GamePlay.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
+    <ClCompile Include="Car.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
+    <ClCompile Include="convinient_functions.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
+    <ClCompile Include="FoodBlock.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
+    <ClCompile Include="NeuralNetwork.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
+    <ClCompile Include="NNCarController.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
+    <ClCompile Include="NNCarInfoFrame.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
+    <ClCompile Include="ObstacleBlock.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
+    <ClCompile Include="ObstacleCircle.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
+    <ClCompile Include="Population.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AGK\AGK_libraries\apps\AGK_RELA\UI\UIFrame.cpp">
+      <Filter>SourceAGK\AGK_RELA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AGK\AGK_libraries\apps\AGK_RELA\UI\UIButtonTypes.cpp">
+      <Filter>SourceAGK\AGK_RELA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AGK\AGK_libraries\apps\AGK_RELA\UI\UIButton.cpp">
+      <Filter>SourceAGK\AGK_RELA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AGK\AGK_libraries\apps\AGK_RELA\UI\TextSprite.cpp">
+      <Filter>SourceAGK\AGK_RELA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AGK\AGK_libraries\apps\AGK_RELA\UI\SpriteAnimation.cpp">
+      <Filter>SourceAGK\AGK_RELA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AGK\AGK_libraries\apps\AGK_RELA\UI\SpriteAndText.cpp">
+      <Filter>SourceAGK\AGK_RELA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AGK\AGK_libraries\apps\AGK_RELA\UI\Sprite.cpp">
+      <Filter>SourceAGK\AGK_RELA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AGK\AGK_libraries\apps\AGK_RELA\UI\NumberTextSprite.cpp">
+      <Filter>SourceAGK\AGK_RELA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AGK\AGK_libraries\apps\AGK_RELA\UI\AnimatedTextSprite.cpp">
+      <Filter>SourceAGK\AGK_RELA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AGK\AGK_libraries\apps\AGK_RELA\UI\AnimatedSpriteAndText.cpp">
+      <Filter>SourceAGK\AGK_RELA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AGK\AGK_libraries\apps\AGK_RELA\UI\AnimatedSprite.cpp">
+      <Filter>SourceAGK\AGK_RELA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AGK\AGK_libraries\apps\AGK_RELA\UI\AgkSprite.cpp">
+      <Filter>SourceAGK\AGK_RELA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AGK\AGK_libraries\apps\AGK_RELA\UI\AgkImage.cpp">
+      <Filter>SourceAGK\AGK_RELA</Filter>
+    </ClCompile>
+    <ClCompile Include="QPopulationTableWidget.cpp">
+      <Filter>SourceQt</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AgkTemplate.h">
+      <Filter>HeaderAGK</Filter>
+    </ClInclude>
+    <ClInclude Include="GamePlay.h">
+      <Filter>HeaderAGK</Filter>
+    </ClInclude>
+    <ClInclude Include="Car.h">
+      <Filter>HeaderAGK</Filter>
+    </ClInclude>
+    <ClInclude Include="convinient_functions.h">
+      <Filter>HeaderAGK</Filter>
+    </ClInclude>
+    <ClInclude Include="FoodBlock.h">
+      <Filter>HeaderAGK</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix.h">
+      <Filter>HeaderAGK</Filter>
+    </ClInclude>
+    <ClInclude Include="NeuralNetwork.h">
+      <Filter>HeaderAGK</Filter>
+    </ClInclude>
+    <ClInclude Include="NNCarController.h">
+      <Filter>HeaderAGK</Filter>
+    </ClInclude>
+    <ClInclude Include="NNCarInfoFrame.h">
+      <Filter>HeaderAGK</Filter>
+    </ClInclude>
+    <ClInclude Include="ObstacleBlock.h">
+      <Filter>HeaderAGK</Filter>
+    </ClInclude>
+    <ClInclude Include="ObstacleCircle.h">
+      <Filter>HeaderAGK</Filter>
+    </ClInclude>
+    <ClInclude Include="Population.h">
+      <Filter>HeaderAGK</Filter>
+    </ClInclude>
+    <ClInclude Include="MyEvenFilter.h">
+      <Filter>HeaderQt</Filter>
+    </ClInclude>
+    <ClInclude Include="QPopulationTableWidget.h">
+      <Filter>HeaderQt</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="AGK_QT.qrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{adaf22be-2131-471f-8453-25f073ed77e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HeaderAGK">
+      <UniqueIdentifier>{c89d28a9-6e68-4a5c-9db7-26f61721cb30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HeaderQt">
+      <UniqueIdentifier>{45cdefeb-f190-408e-8a68-4a47044750c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SourceAGK">
+      <UniqueIdentifier>{d4d790c6-5523-4c45-a65c-218fbf2e7a3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SourceQt">
+      <UniqueIdentifier>{7ae6f936-7424-465c-835c-44003e58e0f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SourceAGK\AGK_RELA">
+      <UniqueIdentifier>{46ab1567-f572-4a5c-a9f1-cc4e660c8694}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="AGK_QT.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="AGK_QT.h">
+      <Filter>HeaderQt</Filter>
+    </QtMoc>
+  </ItemGroup>
+</Project>
