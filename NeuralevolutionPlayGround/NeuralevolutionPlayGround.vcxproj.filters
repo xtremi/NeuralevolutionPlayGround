@@ -37,12 +37,6 @@
     <ClCompile Include="NNCarInfoFrame.cpp">
       <Filter>SourceAGK</Filter>
     </ClCompile>
-    <ClCompile Include="ObstacleBlock.cpp">
-      <Filter>SourceAGK</Filter>
-    </ClCompile>
-    <ClCompile Include="ObstacleCircle.cpp">
-      <Filter>SourceAGK</Filter>
-    </ClCompile>
     <ClCompile Include="Population.cpp">
       <Filter>SourceAGK</Filter>
     </ClCompile>
@@ -88,6 +82,18 @@
     <ClCompile Include="QPopulationTableWidget.cpp">
       <Filter>SourceQt</Filter>
     </ClCompile>
+    <ClCompile Include="FileIO.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
+    <ClCompile Include="ObstacleSprite.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
+    <ClCompile Include="MapIO.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
+    <ClCompile Include="NNIO.cpp">
+      <Filter>SourceAGK</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AgkTemplate.h">
@@ -117,12 +123,6 @@
     <ClInclude Include="NNCarInfoFrame.h">
       <Filter>HeaderAGK</Filter>
     </ClInclude>
-    <ClInclude Include="ObstacleBlock.h">
-      <Filter>HeaderAGK</Filter>
-    </ClInclude>
-    <ClInclude Include="ObstacleCircle.h">
-      <Filter>HeaderAGK</Filter>
-    </ClInclude>
     <ClInclude Include="Population.h">
       <Filter>HeaderAGK</Filter>
     </ClInclude>
@@ -131,6 +131,21 @@
     </ClInclude>
     <ClInclude Include="QPopulationTableWidget.h">
       <Filter>HeaderQt</Filter>
+    </ClInclude>
+    <ClInclude Include="FileIO.h">
+      <Filter>HeaderAGK</Filter>
+    </ClInclude>
+    <ClInclude Include="ObstacleSprite.h">
+      <Filter>HeaderAGK</Filter>
+    </ClInclude>
+    <ClInclude Include="MapIO.h">
+      <Filter>HeaderAGK</Filter>
+    </ClInclude>
+    <ClInclude Include="NNIO.h">
+      <Filter>HeaderAGK</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectIO.h">
+      <Filter>HeaderAGK</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +175,11 @@
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
       <ParseFiles>true</ParseFiles>
     </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="AGK_QT.ui">
@@ -170,5 +190,10 @@
     <QtMoc Include="AGK_QT.h">
       <Filter>HeaderQt</Filter>
     </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ProjectIO.cpp">
+      <Filter>SourceAGK</Filter>
+    </None>
   </ItemGroup>
 </Project>

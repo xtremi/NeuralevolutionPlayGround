@@ -39,12 +39,26 @@ private slots:
 	void pauseButtonPressed();
 	void goButonPressed();
 	void afterWindowShown();
-	void clickOnLoadWorld();
-	void clearAllButtonPressed();
+
 	void addBoxButtonPressed();
 	void addCircleButtonPressed();
+	void addBorderButtonPressed();
+
+	void clearAllButtonPressed();
+
 	void saveNNButtonPressed();
 	void loadNNButtonPressed();
+	void saveMapButtonPressed();
+	void loadMapButtonPressed();
+	void clickOnLoadProject();
+	void clickOnSaveProject();
+
+	void nextGenAutoButtonPressed();
+	void nextGenSelButtonPressed();
+	void resetGenButtonPressed();
+	void clearSelButtonPressed();
+
+	void showSensorRaysCheckBoxStateChanged(bool checked);
 
 public:
 	AGK_QT(QWidget *parent = Q_NULLPTR);
@@ -63,9 +77,8 @@ private:
 	void setGUIPopulationInput(const population_input& popInput);
 	population_input getGUIPopulationInput();
 
-
-	bool loadWorld(const QString& filePath);
-
 	void showEvent(QShowEvent* ev);
+	void changeEvent(QEvent *event);
+
 
 };

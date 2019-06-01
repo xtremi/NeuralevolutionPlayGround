@@ -6,7 +6,7 @@ NNCarController::NNCarController(const glm::vec2& startPos, const glm::vec2& sta
 {	
 	tableItem = _tableItem;
 	car = new Car(startPos, startDir);
-	nndata.init(7, 10, 2, 0.7);
+	nndata.init(7, 10, 4, 0.7);
 }
 NNCarController::~NNCarController() {
 	/*delete car;
@@ -21,14 +21,15 @@ void NNCarController::reset() {
 	tableItem->reset();
 }
 
-void NNCarController::update() {
-	car->update();
+void NNCarController::update(bool showRays) {
+	car->update(showRays);
 	tableItem->setLife(car->getLifePercent());
 	tableItem->setDistance(car->getDistanceTravelled());
 	tableItem->setVisitedCells(car->getNvisitedCells());
+	tableItem->setAvgCheckPointDist(car->getAverageCheckPointDistances());
 	nndata.computeOutput(getNormalizedCarInput());
-
-	if (nndata.Y.at(0, 0) > 0.667) {
+	//2 output
+	/*if (nndata.Y.at(0, 0) > 0.667) {
 		car->gas();
 		tableItem->wflash();
 	}
@@ -44,25 +45,25 @@ void NNCarController::update() {
 	else if (nndata.Y.at(0, 1) < 0.333) {
 		car->turnRight();
 		tableItem->dflash();
-	}
+	}*/
 
-
-	/*if (nndata.Y.at(0, 0) > 0.5){
+	//4 output
+	if (nndata.Y.at(0, 0) > 0.5){
 		car->gas();
-		guiFrame->wflash();
+		tableItem->wflash();
 	}
 	 if (nndata.Y.at(0, 1) > 0.5){
 		car->back();
-		guiFrame->sflash();
+		tableItem->sflash();
 	}
 	if (nndata.Y.at(0, 2) > 0.5){
 		car->turnLeft();
-		guiFrame->aflash();
+		tableItem->aflash();
 	}
 	 if (nndata.Y.at(0, 3) > 0.5){
 		car->turnRight();
-		guiFrame->dflash();
-	}*/
+		tableItem->dflash();
+	}
 	
 
 }

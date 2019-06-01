@@ -10,7 +10,7 @@ class NNCarController
 public:
 	NNCarController(const glm::vec2& startPos, const glm::vec2& startDir, QPopulationTableRow* _tableItem);
 	~NNCarController();
-	void update();
+	void update(bool showRays);
 	void reset();
 	void clear();
 	std::vector<float> getNormalizedCarInput();

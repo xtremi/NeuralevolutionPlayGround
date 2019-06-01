@@ -10,26 +10,55 @@ AGK_QT::AGK_QT(QWidget *parent)
 }
 void AGK_QT::setupUI() {
 	ui.popSize_spinBox->setMinimum(1);
-	ui.startPosX_doubleSpinBox->setMinimum(0.0f);
-	ui.startPosX_doubleSpinBox->setMaximum(1.0f);
-	ui.startPosY_doubleSpinBox->setMinimum(0.0f);
-	ui.startPosY_doubleSpinBox->setMaximum(1.0f);
+	ui.popSize_spinBox->setMaximum(1000);
+	ui.popSize_spinBox->setValue(24);
 
-	ui.startDirX_doubleSpinBox->setMinimum(0.0f);
-	ui.startDirX_doubleSpinBox->setMaximum(1.0f);
-	ui.startDirY_doubleSpinBox->setMinimum(0.0f);
-	ui.startDirY_doubleSpinBox->setMaximum(1.0f);
+	QDoubleSpinBox* spbxs[5] = {
+		ui.startPosX_doubleSpinBox , ui.startPosY_doubleSpinBox,
+		ui.startDirX_doubleSpinBox, ui.startDirY_doubleSpinBox,
+		ui.borderW_doubleSpinBox
+	};
+
+	for (int i = 0; i < 5; i++) {
+		spbxs[i]->setMinimum(0.0f);
+		spbxs[i]->setMaximum(1.0f);
+		spbxs[i]->setSingleStep(0.05f);
+	}
+
+	ui.startPosX_doubleSpinBox->setValue(0.5f);
+	ui.startPosY_doubleSpinBox->setValue(0.5f);
+	ui.startDirX_doubleSpinBox->setValue(1.0f);
+	ui.borderW_doubleSpinBox->setDecimals(3);
+	ui.borderW_doubleSpinBox->setValue(0.005f);
+	ui.borderW_doubleSpinBox->setSingleStep(0.05f);
+
+	
+	ui.showSensorRays_checkBox->click();
 }
 
 void AGK_QT::connectSlotsSignals() {
 	connect(ui.pause_pushButton, SIGNAL(released()), this, SLOT(pauseButtonPressed()));
 	connect(ui.go_pushButton, SIGNAL(released()), this, SLOT(goButonPressed()));
 	connect(ui.clearAll_pushButton, SIGNAL(released()), this, SLOT(clearAllButtonPressed()));
+	
 	connect(ui.addBox_pushButton, SIGNAL(released()), this, SLOT(addBoxButtonPressed()));
 	connect(ui.addCircle_pushButton, SIGNAL(released()), this, SLOT(addCircleButtonPressed()));
+	connect(ui.addBorder_pushButton, SIGNAL(released()), this, SLOT(addBorderButtonPressed()));
+
+	connect(ui.nextGenAuto_pushButton, SIGNAL(released()), this, SLOT(nextGenAutoButtonPressed()));
+	connect(ui.nextGenSel_pushButton, SIGNAL(released()), this, SLOT(nextGenSelButtonPressed()));
+	connect(ui.resetGen_pushButton, SIGNAL(released()), this, SLOT(resetGenButtonPressed()));
+	connect(ui.clearSel_pushButton, SIGNAL(released()), this, SLOT(clearSelButtonPressed()));
+
+	connect(ui.action_saveProject, SIGNAL(triggered()), this, SLOT(clickOnSaveProject()));
+	connect(ui.action_loadProject, SIGNAL(triggered()), this, SLOT(clickOnLoadProject()));
+
 	connect(ui.saveNN_pushButton, SIGNAL(released()), this, SLOT(saveNNButtonPressed()));
 	connect(ui.loadNN_pushButton, SIGNAL(released()), this, SLOT(loadNNButtonPressed()));
-	connect(ui.action_loadWorld, SIGNAL(triggered()), this, SLOT(clickOnLoadWorld()));
+	connect(ui.saveMap_pushButton, SIGNAL(released()), this, SLOT(saveMapButtonPressed()));
+	connect(ui.loadMap_pushButton, SIGNAL(released()), this, SLOT(loadMapButtonPressed()));
+
+	connect(ui.showSensorRays_checkBox, SIGNAL(clicked(bool)), this, SLOT(showSensorRaysCheckBoxStateChanged(bool)));
 }
 void AGK_QT::showEvent(QShowEvent* ev) {
 	QMainWindow::showEvent(ev);
@@ -50,40 +79,6 @@ void AGK_QT::closeEvent(QCloseEvent *event){
 }
 
 
-bool AGK_QT::loadWorld(const QString& filePath) {
-	std::string fpstr = filePath.toUtf8().data();
-
-	std::fstream file;
-	file.open(fpstr);
-
-	if (!file.is_open())
-		return false;
-
-	std::string type, arg1, arg2, arg3;
-	population_input popInput;
-
-	while (!file.eof()) {
-		file >> type >> arg1;
-		if (type == "PSIZE") {
-			popInput.size = std::stoi(arg1);
-		}
-		else if (type == "PSTART" || type == "PDIR") {
-			file >> arg2;
-			glm::vec2 tmpvec(std::stof(arg1), std::stof(arg2));
-			if (type == "PSTART")
-				popInput.startpos = tmpvec;
-			else
-				popInput.startdir = tmpvec;
-		}
-		else if (type == "MAP") {
-			App.gamePlay.loadMap(&arg1[0]);
-		}
-	}
-
-	this->setGUIPopulationInput(popInput);
-
-	return true;
-}
 
 
 void AGK_QT::pauseButtonPressed() {
@@ -100,7 +95,14 @@ void AGK_QT::goButonPressed() {
 	population_input popInput = getGUIPopulationInput();
 	popInput.startpos.x *= (float)DEVICE_WIDTH;
 	popInput.startpos.y *= (float)DEVICE_HEIGHT;
-	App.gamePlay.createPopulation(popInput, ui.overview_tableWidget);	
+	App.gamePlay.createPopulation(popInput, ui.overview_tableWidget);
+	
+	std::vector<QTableWidget*> matrixWidgets = { 
+		ui.xNN_tableWidget, ui.w1NN_tableWidget, 
+		ui.h1NN_tableWidget, ui.w2NN_tableWidget, 
+		ui.h2NN_tableWidget, ui.w3NN_tableWidget, ui.yNN_tableWidget };
+
+	App.gamePlay.setMatrixWidgets(matrixWidgets);
 	pauseButtonPressed();
 }
 
@@ -117,24 +119,72 @@ void AGK_QT::addBoxButtonPressed(){
 void AGK_QT::addCircleButtonPressed(){
 	App.gamePlay.addCircle();
 }
+void AGK_QT::addBorderButtonPressed() {
+	App.gamePlay.addBorder(ui.borderW_doubleSpinBox->value());
+}
+void AGK_QT::nextGenAutoButtonPressed(){
+	App.gamePlay.setNextGenAuto();
+}
+void AGK_QT::nextGenSelButtonPressed() {
+	App.gamePlay.setNextGen();
+}
+void AGK_QT::resetGenButtonPressed() {
+	App.gamePlay.resetCurrentGen();
+}
+void AGK_QT::clearSelButtonPressed() {
+	App.gamePlay.clearCarSelection();
+}
+
 void AGK_QT::saveNNButtonPressed() {
-	if (!App.gamePlay.writeTopNNToFile("NN.txt", 5))
-		int failed = 1;
+	QString filepath = QFileDialog::getSaveFileName(this, "Save Neural Network Matrix file", "", "txt Files (*.txt)");
+	if(!filepath.isEmpty()){
+		if (!App.gamePlay.saveNNfile(filepath.toUtf8().data()))
+			int failed = 1;
+	}
 }
 void AGK_QT::loadNNButtonPressed() {
-	if (!App.gamePlay.readNNFromFile("NN.txt"))
-		int failed = 1;
+	QString filepath = QFileDialog::getOpenFileName(this, "Open Neural Network Matrix file", "", "txt Files (*.txt)");
+	if(!filepath.isEmpty()){
+		if (!App.gamePlay.loadNNfile(filepath.toUtf8().data()))
+			int failed = 1;
+	}
+}
+void AGK_QT::saveMapButtonPressed(){
+	QString filepath = QFileDialog::getSaveFileName(this, "Save Map file", "", "txt Files (*.txt)");
+	if (!filepath.isEmpty()) {
+		if (!App.gamePlay.saveMap(filepath.toUtf8().data()))
+			int failed = 1;
+	}
+}
+void AGK_QT::loadMapButtonPressed(){
+	QString filepath = QFileDialog::getOpenFileName(this, "Open Map file", "", "txt Files (*.txt)");
+	if (!filepath.isEmpty()) {
+		if (!App.gamePlay.loadMap(filepath.toUtf8().data()))
+			int failed = 1;
+	}
 }
 
+void AGK_QT::clickOnSaveProject() {
+	QString filepath = QFileDialog::getSaveFileName(this, "Save Project file", "", "txt Files (*.txt)");
+	if (!filepath.isEmpty()) {
+		if (!App.gamePlay.saveProject(filepath.toUtf8().data()))
+			int failed = 1;
+	}
+}
 
-void AGK_QT::clickOnLoadWorld() {
-	QString filepath = QFileDialog::getOpenFileName(this, "Open World file", "", "txt Files (*.txt)");
+void AGK_QT::clickOnLoadProject() {
+	QString filepath = QFileDialog::getOpenFileName(this, "Open Project file", "", "txt Files (*.txt)");
+
+	population_input popInput;
 
 	if (!filepath.isEmpty()){
-		if (!loadWorld(filepath)) {
-
-		}
+		if (!App.gamePlay.loadProject(filepath.toUtf8().data(), popInput))
+			int failed = 1;
+		else
+			setGUIPopulationInput(popInput);
 	}
+
+	
 }
 
 
@@ -152,9 +202,19 @@ population_input AGK_QT::getGUIPopulationInput() {
 	popInput.startpos.x = ui.startPosX_doubleSpinBox->value();
 	popInput.startpos.y = ui.startPosY_doubleSpinBox->value();
 	popInput.startdir.x = ui.startDirX_doubleSpinBox->value();
-	popInput.startdir.y = ui.startDirY_doubleSpinBox->value();
-
-	
-
+	popInput.startdir.y = ui.startDirY_doubleSpinBox->value();	
 	return popInput;
+}
+
+
+void AGK_QT::changeEvent(QEvent *event) {
+	if (event->type() == QEvent::WindowStateChange) {
+		if (!isMinimized()) {
+			setAttribute(Qt::WA_Mapped);
+		}
+	}
+}
+
+void AGK_QT::showSensorRaysCheckBoxStateChanged(bool checked) {
+	App.gamePlay.showSensorRays(checked);
 }

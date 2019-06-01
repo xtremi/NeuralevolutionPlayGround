@@ -63,7 +63,7 @@ public:
 		for (int i = 0; i < 5; i++)
 			this->setColumnWidth(i, colws[i]);
 		
-		QStringList headerList = { "ID", "Life", "Fist", "Cp", "Cells" };
+		QStringList headerList = { "ID", "Life", "Dist", "Cp", "Cells" };
 
 		this->setHorizontalHeaderLabels(headerList);
 

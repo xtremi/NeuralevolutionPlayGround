@@ -4,16 +4,19 @@
 #include <string>
 #include <map>
 
+#include "ProjectIO.h"
+#include "MapIO.h"
+#include "NNIO.h"
+
 #include "convinient_functions.h"
 #include "Population.h"
-#include "ObstacleBlock.h"
-#include "ObstacleCircle.h"
+#include "ObstacleSprite.h"
 #include "FoodBlock.h"
-//this is only in master a
+
 #include "UI/UIButtonTypes.h"
-//this should only be in the branch
-//and this too
-//this is the third comment
+
+#include <Qtablewidget>
+
 #define  KEY_W  87
 #define  KEY_A  65
 #define  KEY_S  83
@@ -42,24 +45,38 @@ public:
 
 	void init(int wdimx, int wdimy);
 	void update();
+	void updatePopulation();
+	void updateInterface();
 	void resetPopulation();
 
 	void createPopulation(const population_input& popInput, QPopulationTableWidget* _statsTable);
-	bool loadMap(char* mapFilePath);	
+	
+	bool loadProject(char* filePath, population_input& popInput);
+	bool saveProject(char* filePath);
+	bool saveMap(char* mapFilePath);
+	bool loadMap(char* mapFilePath);
+	bool loadNNfile(char* filePath);
+	bool saveNNfile(char* filePath);
+
 	void loadImageMap(const char* mapFilePath);
 	
 	void addBox();
 	void addCircle();
+	void addBorder(double thk);
 
-	bool writeTopNNToFile(const std::string& filepath, int ntop = 5);
-	bool readNNFromFile(const std::string& filepath);
-	struct NN_header {
-		int nNNs = 0, nlayers = 0, nIneurons = 0, nOneurons = 0, nHneurons = 0;
-	};
-	bool readNNFileHeader(std::ifstream& file, NN_header& header);
-	bool readNNmatrices(std::ifstream& file, const NN_header& header, NN::NNdata* nndata);
-	bool readNNmatrix(std::ifstream& file, int height, int width, NN::Matrix* mat);
+	void resetCurrentGen();
+	void setNextGen();
+	void clearCarSelection();
+	void setNextGenAuto();
 
+	void showSensorRays(bool state);
+
+
+	void setMatrixWidgets(const std::vector<QTableWidget*> _matrixWidgets) {
+		matrixWidgets = _matrixWidgets;
+		initMatrixWidgets();
+	}
+	
 private:
 	void initGUI();
 	
@@ -67,11 +84,6 @@ private:
 	void updateCarSelection();
 
 	void processObstacleSelection();
-
-	void resetCurrentGen();
-	void setNextGen();
-	void clearCarSelection();
-	void setNextGenAuto();
 
 	void processUserClick();
 	void carIsClicked(int id);
@@ -87,19 +99,23 @@ private:
 	int vwdim[2];
 	Car* playerCar = NULL;		
 	Population population;
-	std::vector<Sprite*> obstacleSprites;
+	std::vector<ObstacleSprite*> obstacleSprites;
+	std::vector<FoodBlock*> foodSprites;
 	//int selectedObstacleId = 0;
 	int lastPressedObstacleBlock = 0;
 	glm::vec2 pressedObstacleBlockOffset;
-	std::vector<FoodBlock*> foodSprites;
-	//NNCarInfoFrame* carInfoFrame = NULL;	
-	UISpriteAndTextButton_T1* resetGenBtn = NULL;
-	UISpriteAndTextButton_T1* nextGenBtn  = NULL;
-	UISpriteAndTextButton_T1* clearCarSelectionBtn = NULL;
-	UISpriteAndTextButton_T1* nextGenAutoBtn = NULL;
 
 	std::vector<Sprite*> selectSprites;
 	std::vector<Car*> topCars;
 
+
+
+	float nndataDisplayTimer = 0.0f;
+	NN::NNdata* displayedNNdata = NULL;
+	std::vector<QTableWidget*> matrixWidgets;
+	void updateNNmatrixWidgets();
+	void setDisplayedNNdata();
+	void fillMatrixWidget(NN::Matrix* mat, QTableWidget* widget);
+	void initMatrixWidgets();
 };
 

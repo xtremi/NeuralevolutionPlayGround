@@ -131,16 +131,19 @@
     <ClCompile Include="AgkCore.cpp" />
     <ClCompile Include="Car.cpp" />
     <ClCompile Include="convinient_functions.cpp" />
+    <ClCompile Include="FileIO.cpp" />
     <ClCompile Include="FoodBlock.cpp" />
     <ClCompile Include="GamePlay.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="AgkTemplate.cpp" />
+    <ClCompile Include="MapIO.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="NNCarController.cpp" />
     <ClCompile Include="NNCarInfoFrame.cpp" />
-    <ClCompile Include="ObstacleBlock.cpp" />
-    <ClCompile Include="ObstacleCircle.cpp" />
+	<ClCompile Include="NNIO.cpp" />
+    <ClCompile Include="ProjectIO.cpp" />
+    <ClCompile Include="ObstacleSprite.cpp" />
     <ClCompile Include="Population.cpp" />
     <ClCompile Include="QPopulationTableWidget.cpp" />
   </ItemGroup>
@@ -156,18 +159,24 @@
   <ItemGroup>
     <ClInclude Include="Car.h" />
     <ClInclude Include="convinient_functions.h" />
+    <ClInclude Include="FileIO.h" />
     <ClInclude Include="FoodBlock.h" />
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="AgkTemplate.h" />
+    <ClInclude Include="MapIO.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MyEvenFilter.h" />
     <ClInclude Include="NeuralNetwork.h" />
     <ClInclude Include="NNCarController.h" />
     <ClInclude Include="NNCarInfoFrame.h" />
-    <ClInclude Include="ObstacleBlock.h" />
-    <ClInclude Include="ObstacleCircle.h" />
+    <ClInclude Include="NNIO.h" />
+    <ClInclude Include="ObstacleSprite.h" />
     <ClInclude Include="Population.h" />
+    <ClInclude Include="ProjectIO.h" />
     <ClInclude Include="QPopulationTableWidget.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ProjectIO.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

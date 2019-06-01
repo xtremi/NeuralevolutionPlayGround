@@ -128,9 +128,6 @@ int randomFromTo(int from, int to) {
 	return rand() % (to - from + 1) + from;
 }
 
-
-
-
 double sigmoid(double x)
 {
 	return 1 / (1 + std::exp(-x));

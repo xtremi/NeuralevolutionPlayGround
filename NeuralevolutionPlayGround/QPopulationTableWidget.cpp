@@ -60,7 +60,7 @@ void QPopulationTableRow::setVisitedCells(int n) {
 	cellsItem->setInt(n);
 }
 void QPopulationTableRow::setAvgCheckPointDist(float cpdist) {
-	cellsItem->setFloat(cpdist, 0, 'f');
+	avgCpItem->setFloat(cpdist, 0, 'f');
 }
 void QPopulationTableRow::wflash() {}
 void QPopulationTableRow::sflash() {}

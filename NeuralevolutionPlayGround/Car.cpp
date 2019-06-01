@@ -77,6 +77,8 @@ void Car::reset() {
 			worldgrid[i][j] = false;
 		}
 	}
+
+	this->updateLifeSpriteSize();
 }
 
 void Car::toogleSelected() {
@@ -133,7 +135,7 @@ void Car::updateLifeSpriteSize() {
 	lifeLeft->setSize(width, lifeLeft->getHeight());	
 }
 
-void Car::updateSensorRays() {
+void Car::updateSensorRays(bool showRays) {
 	glm::vec2 rstartPos = getPos();
 	
 
@@ -146,11 +148,13 @@ void Car::updateSensorRays() {
 			raypnt.x = agk::GetRayCastX();
 			raypnt.y = agk::GetRayCastY();
 			sensorRayDistances[i] = glm::distance(raypnt, rstartPos);
-			agk::DrawLine(rstartPos.x, rstartPos.y, raypnt.x, raypnt.y, 125, 25, 25);
+			if(showRays)
+				agk::DrawLine(rstartPos.x, rstartPos.y, raypnt.x, raypnt.y, 125, 25, 25);
 		}
 		else{
 			sensorRayDistances[i] = MAX_RAY_CAST_LENGTH;
-			agk::DrawLine(rstartPos.x, rstartPos.y, raypnt.x, raypnt.y, 25, 125, 25);
+			if (showRays)
+				agk::DrawLine(rstartPos.x, rstartPos.y, raypnt.x, raypnt.y, 25, 125, 25);
 		}
 		
 	}

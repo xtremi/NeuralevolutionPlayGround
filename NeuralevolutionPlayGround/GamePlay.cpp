@@ -18,6 +18,12 @@ void GamePlay::init(int wdimx, int wdimy) {
 	maxTimer = 25.0f;
 	//loadMap("map_05.txt");
 	//loadImageMap("corners_map.png");
+
+	agk::SetPhysicsWallLeft(1);
+	agk::SetPhysicsWallRight(1);
+	agk::SetPhysicsWallTop(1);
+	agk::SetPhysicsWallBottom(1);
+
 }
 
 void GamePlay::resetPopulation() {
@@ -37,6 +43,7 @@ void GamePlay::createPopulation(const population_input& popInput, QPopulationTab
 	playerCar = new Car(popInput.startpos, popInput.startdir);
 	//carInfoFrame = new NNCarInfoFrame(glm::vec2(vwdim[0] - 400.0f, 0.0f), glm::vec2(100.0f, 35.0f), 22);
 	population.init(popInput, _statsTable);
+	setDisplayedNNdata();
 }
 
 void GamePlay::clearCarSelection() {
@@ -44,6 +51,7 @@ void GamePlay::clearCarSelection() {
 }
 void GamePlay::setNextGen() {
 	population.setNextGen();
+	setDisplayedNNdata();
 }
 void GamePlay::resetCurrentGen(){
 	population.resetCurrentGen();
@@ -55,53 +63,50 @@ void GamePlay::setNextGenAuto(){
 		selectSprites[i]->setPosition(topCars[i]->getPos());
 		selectSprites[i]->show();
 	}
+	setDisplayedNNdata();
+}
+void GamePlay::showSensorRays(bool state) {
+	population.showSensorRays(state);
 }
 
-
-void GamePlay::initGUI() {
-	resetGenBtn = new UISpriteAndTextButton_T1(glm::vec3(0, 1, 0), glm::vec3(1.0, 1.0, 0.0), 
-		glm::vec3(0.2f), "Reset Gen", glm::vec3(0), 
-		glm::vec2(100.0f, 30.0f), 26.0f, glm::vec2(70.0f, 750.0f));
-	resetGenBtn->realign();
-
-	nextGenBtn = new UISpriteAndTextButton_T1(glm::vec3(0, 1, 0), glm::vec3(1.0, 1.0, 0.0),
-		glm::vec3(0.2f), "Next Gen", glm::vec3(0),
-		glm::vec2(100.0f, 30.0f), 26.0f, glm::vec2(180.0f, 750.0f));
-	nextGenBtn->realign();
-
-	nextGenAutoBtn = new UISpriteAndTextButton_T1(glm::vec3(0, 1, 0), glm::vec3(1.0, 1.0, 0.0),
-		glm::vec3(0.2f), "Next Get Auto", glm::vec3(0),
-		glm::vec2(100.0f, 30.0f), 26.0f, glm::vec2(290.0f, 750.0f));
-	nextGenAutoBtn->realign();
-	
-	clearCarSelectionBtn = new UISpriteAndTextButton_T1(glm::vec3(0, 1, 0), glm::vec3(1.0, 1.0, 0.0),
-		glm::vec3(0.2f), "Clear sel.", glm::vec3(0),
-		glm::vec2(100.0f, 30.0f), 26.0f, glm::vec2(400.0f, 750.0f));
-	clearCarSelectionBtn->realign();
-}
+void GamePlay::initGUI() {}
 
 void GamePlay::update() {
+	updatePopulation();
+	updateInterface();
+	updateNNmatrixWidgets();
+}
+
+void GamePlay::updatePopulation() {
+	population.update();
+	updatePlayerCar();
+
+	timer += 0.1f;
+	if (timer > maxTimer || population.getNaliveMembers() == 0) {
+		timer = 0.0f;
+		setNextGenAuto();
+		maxTimer += 1.0f;
+	}
+
+	agk::StepPhysics(1.0f / 60.0f);
+
+
+}
+void GamePlay::updateInterface() {
 	bool ppressed = agk::GetPointerPressed();
 	bool preleased = agk::GetPointerReleased();
 	bool pstate = agk::GetPointerState();
 
-	//carInfoFrame->postProcess();
-	population.update();
-	updatePlayerCar();
 	updateCarSelection();
 	processUserClick();
-	resetGenBtn->processButtonState(ppressed, preleased, pstate);
+	/*resetGenBtn->processButtonState(ppressed, preleased, pstate);
 	nextGenBtn->processButtonState(ppressed, preleased, pstate);
 	nextGenAutoBtn->processButtonState(ppressed, preleased, pstate);
-	clearCarSelectionBtn->processButtonState(ppressed, preleased, pstate);
+	clearCarSelectionBtn->processButtonState(ppressed, preleased, pstate);*/
 
 	processObstacleSelection();
 
-	//processWorldGridSprites(playerCar->getWorldGrid());
-
-	agk::StepPhysics(1.0f / 60.0f);
-
-	if (resetGenBtn->getButtonState()) {
+	/*if (resetGenBtn->getButtonState()) {
 		resetCurrentGen();
 	}
 	else if (nextGenBtn->getButtonState()) {
@@ -112,27 +117,17 @@ void GamePlay::update() {
 	}
 	else if (nextGenAutoBtn->getButtonState()) {
 		setNextGenAuto();
-	}
+	}*/
 
 	std::string genstr = "Gen: " + TOSTR(population.getGenerationNumber(), 0);
 	agk::Print(&genstr[0]);
 
 	std::string tstr = TOSTR(timer, 2) + "/" + TOSTR(maxTimer, 2);
-	
-	timer += 0.1f;
 	agk::Print(&tstr[0]);
-	if (timer > maxTimer || population.getNaliveMembers() == 0) {
-		timer = 0.0f;
-		setNextGenAuto();
-		maxTimer+=1.0f;
-	}
-
-	/*std::vector<float>* d = playerCar->getSensorRayDistances();
-	for (float dist : (*d)) {
-		agk::Print(agk::Str(dist,2));
-	}*/
-
+	
 }
+
+
 
 void GamePlay::updateCarSelection() {
 	for (int i = 0; i < topCars.size(); i++) {
@@ -142,7 +137,7 @@ void GamePlay::updateCarSelection() {
 }
 
 void GamePlay::updatePlayerCar() {
-	playerCar->update();
+	playerCar->update(true);
 
 	if (agk::GetRawKeyState(KEY_W)) {
 		playerCar->gas();
@@ -172,61 +167,72 @@ void GamePlay::loadImageMap(const char* mapFilePath) {
 
 }
 
-bool GamePlay::loadMap(char* mapFilePath) {
-
-	std::fstream file;
-	file.open(mapFilePath);
-	if (!file.is_open())
+bool GamePlay::loadProject(char* filePath, population_input& popInput) {
+	ProjectIO projectIO;
+	std::string mapFile, nnFile;
+	if (!projectIO.read(filePath, popInput, mapFile, nnFile))
 		return false;
 
-	std::string type;
-	std::string px, py, sx, sy, alphastr;
-	glm::vec2 pos, size;
-	float alpha;
-
-	float dimx = (float)vwdim[0];// -400.0f;
-	float dimy = (float)vwdim[1];
-
-	while (!file.eof()) {
-	
-		//BOX FOOD OR CIRCLE
-		file >> type;
-		if(type[0] == 'B' || type[0] == 'C' || type[0] == 'F'){
-			file >> px >> py;
-			pos = glm::vec2(std::stof(px) * dimx, std::stof(py)* dimy);
-
-			if(type[0] == 'B'){
-				file >> sx >> sy >> alphastr;
-			
-				size = glm::vec2(std::stof(sx) * dimx, std::stof(sy) * dimy);
-				alpha = std::stof(alphastr);
-				glm::vec3 color = randVec3FromTo(0.0f, 1.0f);
-
-				ObstacleBlock* ob = new ObstacleBlock(pos, size, color);
-				ob->setRotation(alpha);
-				obstacleSprites.push_back(ob);
-			}
-			else if (type[0] == 'F') {
-				FoodBlock* food = new FoodBlock(pos);
-				foodSprites.push_back(food);
-			}
-			else if (type[0] == 'C') {
-				file >> sx;
-
-				size = glm::vec2(std::stof(sx) * dimx, -1);
-				glm::vec3 color = randVec3FromTo(0.0f, 1.0f);
-				ObstacleCircle* oc = new ObstacleCircle(pos, size, color);
-				obstacleSprites.push_back(oc);
-			}
-		}
-
-
+	if (!mapFile.empty()){
+		if (!loadMap(&mapFile[0]))
+			return false;
 	}
 
+	if (!nnFile.empty()){
+		if (!loadNNfile(&nnFile[0]))
+			return false;
+	}
 
-	file.close();
 	return true;
 }
+bool GamePlay::saveProject(char* filePath) {	
+	std::string projectFilePath = std::string(filePath);
+	size_t lastindex = projectFilePath.find_last_of(".");
+	std::string tmpStr = projectFilePath.substr(0, lastindex); //no extension
+
+	std::string mapFilePath = tmpStr + "_map.txt";
+	std::string nnFilePath = tmpStr + "_nn.txt";
+
+	ProjectIO projectIO;
+	population_input popInput = population.getCurrentPopulationInput();
+	if (!projectIO.write(projectFilePath, popInput, mapFilePath, nnFilePath))
+		return false;
+	
+	return true;
+}
+bool GamePlay::saveMap(char* mapFilePath) {
+	MapIO mapIO;
+	if (!mapIO.write(mapFilePath, vwdim, &obstacleSprites, &foodSprites))
+		return false;
+	return true;
+}
+bool GamePlay::loadMap(char* mapFilePath) {
+	MapIO mapIO;
+	if (!mapIO.read(mapFilePath, vwdim, &obstacleSprites, &foodSprites))
+		return false;
+	return true;
+}
+bool GamePlay::loadNNfile(char* filePath) {
+	NNIO nnIO;
+	std::vector<NN::NNdata>* nndatas;
+	int genN;
+	if (!nnIO.read(filePath, nndatas, genN))
+		return false;
+	return true;
+}
+bool GamePlay::saveNNfile(char* filePath) {
+	NNIO nnIO;
+	
+	std::vector<NN::NNdata*> topNNdatas;
+	population.getTopNNdata(topNNdatas, 5);
+	int genN = population.getGenerationNumber();
+
+	if (!nnIO.write(filePath, &topNNdatas, genN))
+		return false;
+
+	return true;
+}
+
 
 void GamePlay::addBox() {
 	glm::vec3 color = randVec3FromTo(0.0f, 1.0f);
@@ -237,6 +243,31 @@ void GamePlay::addCircle() {
 	glm::vec3 color = randVec3FromTo(0.0f, 1.0f);
 	ObstacleCircle* oc = new ObstacleCircle(glm::vec2(vwdim[0] / 2, vwdim[1] / 2), glm::vec2(50.0f), color);
 	obstacleSprites.push_back(oc);
+}
+void GamePlay::addBorder(double thk) {
+
+	thk *= (float)vwdim[0];
+
+	float SX = (float)vwdim[0];
+	float SY = (float)vwdim[1];
+
+	glm::vec2 poss[4];
+	glm::vec2 sizes[4];
+	poss[0] = glm::vec2(0.0f, 0.0f);			// ------
+	poss[1] = glm::vec2(0.0f, thk);				// |
+	poss[2] = glm::vec2(0.0f, SY - thk);		//		|
+	poss[3] = glm::vec2(SX - thk, thk);		//  -----
+
+	sizes[0] = glm::vec2(SX, thk);
+	sizes[1] = glm::vec2(thk, SY - 2*thk);
+	sizes[2] = sizes[0];
+	sizes[3] = sizes[1];
+
+	for (int i = 0; i < 4; i++) {
+		glm::vec3 color = randVec3FromTo(0.0f, 1.0f);
+		ObstacleBlock* ob = new ObstacleBlock(poss[i], sizes[i], color);
+		obstacleSprites.push_back(ob);
+	}
 }
 
 void GamePlay::processUserClick() {
@@ -320,14 +351,18 @@ void GamePlay::processObstacleSelection() {
 			glm::vec2 objPos(agk::GetSpriteX(s), agk::GetSpriteY(s));
 			pressedObstacleBlockOffset = pressedPos - objPos;
 			agk::SetSpriteOffset(s, pressedObstacleBlockOffset.x, pressedObstacleBlockOffset.y);
-			//agk::SetSpritePhysicsOn(s, 1);
-			agk::SetSpriteShape(s, (int)AgkSpriteShape::box);
+			//agk::SetSpritePhysicsOn(s, 1);			
 		}
 			
 	}
 
 	else if(agk::GetPointerReleased() && lastPressedObstacleBlock){
-		agk::SetSpriteColorAlpha(lastPressedObstacleBlock, 255);
+		int s = lastPressedObstacleBlock;
+		if (agk::GetSpriteGroup(s) == OBSTACLE_BLOCK_GROUP)
+			agk::SetSpriteShape(s, (int)AgkSpriteShape::box);
+		else
+			agk::SetSpriteShape(s, (int)AgkSpriteShape::circle);
+		agk::SetSpriteColorAlpha(s, 255);
 		lastPressedObstacleBlock = 0;
 	}
 	else if (lastPressedObstacleBlock && agk::GetPointerState()) {
@@ -347,13 +382,16 @@ void GamePlay::processObstacleSelection() {
 		else if (agk::GetRawKeyState(KEY_DOWN))
 			agk::SetSpriteY(s, agk::GetSpriteY(s) + move_speed);*/
 		int s = lastPressedObstacleBlock;
+		int g = agk::GetSpriteGroup(s);
+
 		if (agk::GetRawKeyState(KEY_LEFT))
 			agk::SetSpriteAngle(s, agk::GetSpriteAngle(s) + rot_speed);
 		else if (agk::GetRawKeyState(KEY_RIGHT))
 			agk::SetSpriteAngle(s, agk::GetSpriteAngle(s) - rot_speed);
 
-		if (agk::GetRawKeyState(KEY_Z))
+		if (agk::GetRawKeyState(KEY_Z)){			
 			agk::SetSpriteScale(s, agk::GetSpriteScaleX(s)*(1.0f - sc_factor), agk::GetSpriteScaleY(s));
+		}
 		else if (agk::GetRawKeyState(KEY_X))
 			agk::SetSpriteScale(s, agk::GetSpriteScaleX(s)*(1.0f + sc_factor), agk::GetSpriteScaleY(s));
 		
@@ -369,135 +407,67 @@ void GamePlay::processObstacleSelection() {
 }
 
 
-bool GamePlay::writeTopNNToFile(const std::string& filepath, int ntop) {
-	std::vector<NN::NNdata*> topnns;
-	population.getTopNNdata(topnns, ntop);
+void GamePlay::setDisplayedNNdata() {
+	std::vector<NN::NNdata*> nndatas;
+	population.getTopNNdata(nndatas, 1);
 
-	std::ofstream file;
-	file.open(filepath);
-	if (!file.is_open())
-		return false;
-
-	file << "SIZE      " << topnns.size() << std::endl;
-	file << "LAYERS    " << 2 << std::endl;
-	file << "INEURONS  " << topnns[0]->W1.getHeight() << std::endl;
-	file << "ONEURONS  " << topnns[0]->W3.getWidth() << std::endl;
-	file << "HNEURONS  " << topnns[0]->W2.getWidth() << std::endl;
-
-	int c = 0;
-	for (NN::NNdata* nndata : topnns) {
-		file << "NNDATA    " << c++ << std::endl;
-		file << "W1\n";	nndata->W1.print(file);
-		file << "W2\n";	nndata->W2.print(file);
-		file << "W3\n";	nndata->W3.print(file);
-		file << "B1\n";	nndata->B1.print(file);
-		file << "B2\n";	nndata->B2.print(file);
-		file << "B3\n";	nndata->B3.print(file);
-	}
-
-	file.close();
-	return true;
+	displayedNNdata = nndatas[0];
+	
 }
 
-bool GamePlay::readNNFileHeader(std::ifstream& file, NN_header& header) {
-
-	std::string key;
-	while (!file.eof()) {
-
-		file >> key;
-		std::string argstr; file >> argstr;
-		int val = std::stoi(argstr);
-		if (key == "SIZE")
-			header.nNNs = val;
-		else if (key == "LAYERS")
-			header.nlayers = val;
-		else if (key == "INEURONS")
-			header.nIneurons = val;
-		else if (key == "ONEURONS")
-			header.nOneurons = val;
-		else if (key == "HNEURONS")
-			header.nHneurons = val;
-
-		if (header.nNNs && header.nlayers && header.nIneurons && header.nHneurons && header.nOneurons)
-			return true;
-	}
-	return false;
-}
-
-bool GamePlay::readNNmatrices(std::ifstream& file, const NN_header& header, NN::NNdata* nndata) {
-	static std::map<std::string, int> keyMap = {
-		{"W1", 0},{"W2", 1},{"W3", 2},{"B1", 3},{"B2", 4},{"B3", 5}
+void GamePlay::initMatrixWidgets() {
+	NN::Matrix* matrices[7] = {
+		&displayedNNdata->X, &displayedNNdata->W1,&displayedNNdata->H1,
+		&displayedNNdata->W2, &displayedNNdata->H2,&displayedNNdata->W3,
+		&displayedNNdata->Y	
 	};
 
-	int matHeights[6] = { header.nIneurons, header.nHneurons, header.nHneurons, 1,1,1 };
-	int matWidth[6] = { header.nHneurons, header.nHneurons, header.nOneurons, header.nHneurons,header.nHneurons,header.nOneurons};
-	bool matsFound[6] = { false, false, false, false, false, false };
-	NN::Matrix* matrices[6] = { &nndata->W1, &nndata->W2, &nndata->W3, &nndata->B1, &nndata->B2, &nndata->B3 };
-	
-	std::string key;
-	while(!file.eof()){	
-		file >> key;
-		if (keyMap.find(key) != keyMap.end()) {
-			int index = keyMap[key];
+	for (int i = 0; i < 7; i++) {
+		int w = matrices[i]->getWidth();
+		int h = matrices[i]->getHeight();
+		matrixWidgets[i]->setRowCount(h);
+		matrixWidgets[i]->setColumnCount(w);
 
-			int h = matHeights[index];
-			int w = matWidth[index];
-			matsFound[index] = true;
-			
-			if (!readNNmatrix(file, h, w, matrices[index]))
-				return false;
-		}
-
-		bool allFound = true;
-		for (int i = 0; i < 6; i++) {
-			if (!matsFound[i]){
-				allFound = false;
-				break;
+		for (int row = 0; row < h; row++) {
+			for (int column = 0; column < w; column++) {
+				QTableWidgetItem *item = new QTableWidgetItem(QString::number(0.0f, 'f', 2));
+				matrixWidgets[i]->setItem(row, column, item);
 			}
 		}
-		if (allFound) return true;
-		
+
 	}
-	return false;
 }
-bool GamePlay::readNNmatrix(std::ifstream& file, int height, int width, NN::Matrix* mat) {
-	std::vector<std::vector<double>> data;
-	std::string vstr;
-	double v;
-	for (int i = 0; i < height; i++) {
-		std::vector<double> row;
-		for (int j = 0; j < width; j++) {
-			if (file.eof()) {
-				file.close();
-				return false;
-			}
-			file >> vstr;
-			v = std::stod(vstr);
-			row.push_back(v);
+
+
+static const float MAX_NNDATA_DISPLAY_TIMER = 2.0f;
+static const float DELTA_NNDATA_DISPLAY_TIMER = 0.25f;
+void GamePlay::updateNNmatrixWidgets(){
+
+	nndataDisplayTimer += DELTA_NNDATA_DISPLAY_TIMER;
+	if(nndataDisplayTimer > MAX_NNDATA_DISPLAY_TIMER){
+		nndataDisplayTimer = 0.0f;
+		int c = 0;
+		fillMatrixWidget(&displayedNNdata->X, matrixWidgets[c++]);
+		fillMatrixWidget(&displayedNNdata->W1, matrixWidgets[c++]);
+		fillMatrixWidget(&displayedNNdata->H1, matrixWidgets[c++]);
+		fillMatrixWidget(&displayedNNdata->W2, matrixWidgets[c++]);
+		fillMatrixWidget(&displayedNNdata->H2, matrixWidgets[c++]);
+		fillMatrixWidget(&displayedNNdata->W3, matrixWidgets[c++]);
+		fillMatrixWidget(&displayedNNdata->Y, matrixWidgets[c++]);
+	}
+
+}
+
+
+void GamePlay::fillMatrixWidget(NN::Matrix* mat, QTableWidget* widget) {
+
+	int h = mat->getHeight();
+	int w = mat->getWidth();
+
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
+			widget->item(i, j)->setText(QString::number(mat->at(i, j), 'f', 2));
 		}
-		data.push_back(row);
 	}
 
-	(*mat) = NN::Matrix(data);
-	return true;
-}
-
-bool GamePlay::readNNFromFile(const std::string& filepath) {
-	std::vector<NN::NNdata> topnns;
-	std::ifstream file;
-	file.open(filepath);
-	if (!file.is_open())
-		return false;
-	
-	NN_header header;
-	if (!readNNFileHeader(file, header))
-		return false;
-
-	for(int i = 0; i < header.nNNs; i++){
-		NN::NNdata nndata;
-		if (!readNNmatrices(file, header, &nndata))
-			return false;
-		topnns.push_back(nndata);
-	}	
-	return true;
 }

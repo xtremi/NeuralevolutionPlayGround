@@ -4,7 +4,7 @@
 #include "convinient_functions.h"
 
 #include "FoodBlock.h"
-#include "ObstacleBlock.h"
+#include "ObstacleSprite.h"
 
 #include "glm/gtx/rotate_vector.hpp"
 
@@ -37,14 +37,15 @@ public:
 	void reset();
 	void setCarId(int id);
 
-	void update() {
+	void update(bool showRays) {
 		updatePhysics();
 		checkCollision();
 		updateLifeSpritePosition();
 		updateTextSpritePosition();
 		if(_isSelected)
 			updateSelectionSpritePosition();
-		updateSensorRays();
+		
+		updateSensorRays(showRays);
 
 		checkLife();
 		
@@ -115,7 +116,7 @@ private:
 	void initLifeSprite();
 	void updateLifeSpritePosition();
 	void updateLifeSpriteSize();
-	void updateSensorRays();
+	void updateSensorRays(bool showRays);
 	void checkLife();
 	void initTextSprite();	
 	void initSelectionSprite();

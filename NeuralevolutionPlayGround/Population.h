@@ -37,6 +37,12 @@ public:
 
 	std::vector<Car*> getTopCars();
 
+	population_input getCurrentPopulationInput();
+
+	void showSensorRays(bool state) {
+		_showSensorRays = state;
+	}
+
 private:
 	void breed(std::vector<int>* parents, std::vector<int>* childs);
 	void breedSorted(int topN);
@@ -45,12 +51,13 @@ private:
 	std::vector<int> liveMembers;
 	std::vector<int> deadMembers;
 	
-	int nmembers = 0;
-	/*int nLiveMembers = 0;
-	int nDeadMembers = 0;*/
-	//NNCarInfoFrame* carInfoFrame = NULL;
+	population_input popInput;
+
+	//int nmembers = 0;
+	
 	QPopulationTableWidget* statsTable = NULL;
 
 	int generationNumber = 0;
 
+	bool _showSensorRays = true;
 };

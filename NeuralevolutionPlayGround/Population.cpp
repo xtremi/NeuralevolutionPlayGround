@@ -1,9 +1,11 @@
 #include "Population.h"
 
-void Population::init(const population_input& popInput, QPopulationTableWidget* _statsTable) {
+void Population::init(const population_input& _popInput, QPopulationTableWidget* _statsTable) {
 	statsTable = _statsTable;
-	nmembers = popInput.size;
-	for (int i = 0; i < nmembers; i++) {
+	popInput = _popInput;
+	
+	
+	for (int i = 0; i < popInput.size; i++) {
 		//NNCarInfoFrameElement* guiEl = carInfoFrame->addFrameElement();
 		QPopulationTableRow* tableItem = statsTable->newRow();
 		members.emplace_back(NNCarController(popInput.startpos, popInput.startdir, tableItem));
@@ -20,7 +22,7 @@ void Population::toogleCarSelection(int id) {
 }
 
 void Population::clearCarSelection() {
-	for (int i = 0; i < nmembers; i++) {
+	for (int i = 0; i < popInput.size; i++) {
 		if (members[i].getCar()->isSelected()) {
 			members[i].getCar()->toogleSelected();
 			members[i].getTableItem()->toogleSelected();
@@ -38,7 +40,7 @@ void Population::setNextGenAuto() {
 	int maxCollisions = -1;
 	int maxVisitedCells = -1;
 
-	for (int i = 0; i < nmembers; i++) {
+	for (int i = 0; i < popInput.size; i++) {
 		float life = members[i].getCar()->getLifePercent();
 		float dist = members[i].getCar()->getDistanceTravelled();
 		float checkPointDistAvg = members[i].getCar()->getAverageCheckPointDistances();
@@ -52,7 +54,7 @@ void Population::setNextGenAuto() {
 		if (visitedCells > maxVisitedCells) maxVisitedCells = visitedCells;
 	}
 
-	for (int i = 0; i < nmembers; i++) {
+	for (int i = 0; i < popInput.size; i++) {
 		members[i].calculateFitness(maxLife, maxDist, maxCheckDistAvg, maxCollisions, maxVisitedCells);
 	}
 	
@@ -70,7 +72,7 @@ void Population::setNextGenAuto() {
 
 
 void Population::breedSorted(int topN) {
-	for (int id = topN; id < nmembers; id++) {
+	for (int id = topN; id < popInput.size; id++) {
 		int rindex1 = NN::randomFromTo(0, topN - 1);
 		int rindex2 = NN::randomFromTo(0, topN - 1);
 
@@ -89,7 +91,7 @@ void Population::setNextGen() {
 	std::vector<int> selectedCars;
 	std::vector<int> unselectedCars;
 	int nselections = 0;
-	for (int i = 0; i < nmembers; i++) {
+	for (int i = 0; i < popInput.size; i++) {
 		if (members[i].getCar()->isSelected()) {
 			selectedCars.push_back(i);
 			nselections++;
@@ -133,7 +135,7 @@ void Population::reset() {
 	}
 	members.clear();
 	generationNumber = 0;
-	nmembers = 0;
+	popInput.size = 0;
 }
 
 void Population::resetCurrentGen() {
@@ -141,15 +143,14 @@ void Population::resetCurrentGen() {
 	deadMembers.clear();
 	setAllLive();
 
-	for (int i = 0; i < nmembers; i++) {
+	for (int i = 0; i < popInput.size; i++) {
 		members[i].reset();
 	}
 }
 
 void Population::setAllLive() {	
-	for (int i = 0; i < nmembers; i++){
+	for (int i = 0; i < popInput.size; i++){
 		liveMembers.push_back(i);
-
 	}
 
 	//nLiveMembers = nmembers;
@@ -167,7 +168,7 @@ void Population::update() {
 	for (auto it = liveMembers.begin(); it != liveMembers.end();) {
 		int id = (*it);
 
-		members[id].update();
+		members[id].update(_showSensorRays);
 		if (members[id].carIsDead()) {
 			it = liveMembers.erase(it);
 			deadMembers.push_back(id);
@@ -180,12 +181,12 @@ void Population::update() {
 }
 
 int Population::hitTest(const glm::vec2& pos) {
-	for (int i = 0; i < nmembers; i++) {
+	for (int i = 0; i < popInput.size; i++) {
 		if (members[i].getCar()->hitTest(pos)) {
 			return i;
 		}
 	}
-	for (int i = 0; i < nmembers; i++) {
+	for (int i = 0; i < popInput.size; i++) {
 		if (members[i].getTableItem()->hitTest(pos)) {
 			return i;
 		}
@@ -194,7 +195,7 @@ int Population::hitTest(const glm::vec2& pos) {
 }
 
 glm::vec2 Population::getCarPosition(int id) {
-	if (id < nmembers) {
+	if (id < popInput.size) {
 		return members[id].getCar()->getPos();
 	}
 	else
@@ -217,4 +218,8 @@ void Population::getTopNNdata(std::vector<NN::NNdata*>& topnns, int topn) {
 		topnns.push_back(members[i].getNNdata());
 	}
 
+}
+
+population_input Population::getCurrentPopulationInput() {
+	return popInput;
 }

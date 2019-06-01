@@ -845,8 +845,7 @@ int APIENTRY agkMain(HWND windowHandle)
 			try
 			{
 				if ( !agk::IsCapturingImage() ) 
-				{
-					
+				{					
 					if ( App.Loop() == 1 )
 						bExitLoop = true;
 					if (App.endAgkLoop) 

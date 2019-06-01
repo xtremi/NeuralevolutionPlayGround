@@ -30,6 +30,7 @@ int app::Loop (void)
 		gamePlay.update();
 	}
 	else if (gameState == game_state::PAUSE) {
+		gamePlay.updateInterface();
 		agk::StepPhysics(0);
 	}
 
